@@ -4,15 +4,15 @@
 
 package com.sales.market.controller;
 
-import com.sales.market.dto.CategoryDto;
-import com.sales.market.model.Category;
-import com.sales.market.service.CategoryService;
+import com.sales.market.data.dto.CategoryDTO;
+import com.sales.market.data.model.Category;
+import com.sales.market.service.interfaz.CategoryService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/categories")
-public class CategoryController extends GenericController<Category, CategoryDto> {
+public class CategoryController extends GenericController<Category, CategoryDTO> {
     private CategoryService service;
 
     public CategoryController(CategoryService service) {

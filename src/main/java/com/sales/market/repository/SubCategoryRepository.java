@@ -5,7 +5,7 @@
 package com.sales.market.repository;
 
 
-import com.sales.market.model.SubCategory;
+import com.sales.market.data.model.SubCategory;
 
 import java.util.List;
 

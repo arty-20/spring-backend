@@ -4,7 +4,7 @@
 
 package com.sales.market.repository;
 
-import com.sales.market.model.FeatureInstance;
+import com.sales.market.data.model.FeatureInstance;
 
 public interface FeatureInstanceRepository extends GenericRepository<FeatureInstance> {
 }

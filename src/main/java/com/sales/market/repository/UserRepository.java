@@ -1,6 +1,6 @@
 package com.sales.market.repository;
 
-import com.sales.market.model.User;
+import com.sales.market.data.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;

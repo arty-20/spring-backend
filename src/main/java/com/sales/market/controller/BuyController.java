@@ -4,10 +4,10 @@
 
 package com.sales.market.controller;
 
-import com.sales.market.dto.BuyDto;
-import com.sales.market.model.Buy;
-import com.sales.market.service.BuyService;
-import com.sales.market.service.GenericService;
+import com.sales.market.data.dto.BuyDTO;
+import com.sales.market.data.model.Buy;
+import com.sales.market.service.interfaz.BuyService;
+import com.sales.market.service.interfaz.GenericService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/buys")
-public class BuyController extends GenericController<Buy, BuyDto> {
+public class BuyController extends GenericController<Buy, BuyDTO> {
     private BuyService service;
 
     public BuyController(BuyService service) {

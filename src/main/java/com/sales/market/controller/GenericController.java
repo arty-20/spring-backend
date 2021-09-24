@@ -5,10 +5,10 @@
 package com.sales.market.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sales.market.dto.DtoBase;
+import com.sales.market.data.dto.DTOBase;
 import com.sales.market.exception.InternalErrorException;
-import com.sales.market.model.ModelBase;
-import com.sales.market.service.GenericService;
+import com.sales.market.data.model.ModelBase;
+import com.sales.market.service.interfaz.GenericService;
 import io.micrometer.core.instrument.util.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @CrossOrigin
-public abstract class GenericController<E extends ModelBase, D extends DtoBase<E>> {
+public abstract class GenericController<E extends ModelBase, D extends DTOBase<E>> {
 
     protected static final String ID = "id";
     protected static final String FILTER = "filter";

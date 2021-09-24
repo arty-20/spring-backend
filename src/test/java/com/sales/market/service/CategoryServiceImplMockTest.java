@@ -1,7 +1,8 @@
 package com.sales.market.service;
 
-import com.sales.market.model.Category;
+import com.sales.market.data.model.Category;
 import com.sales.market.repository.CategoryRepository;
+import com.sales.market.service.impl.CategoryServiceImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

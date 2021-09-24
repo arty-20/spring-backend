@@ -1,12 +1,12 @@
 package com.sales.market.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sales.market.dto.*;
-import com.sales.market.model.User;
+import com.sales.market.data.dto.*;
+import com.sales.market.data.model.User;
 import com.sales.market.service.EmailService;
-import com.sales.market.service.GenericService;
-import com.sales.market.service.TokenService;
-import com.sales.market.service.UserService;
+import com.sales.market.service.interfaz.GenericService;
+import com.sales.market.config.security.TokenService;
+import com.sales.market.service.interfaz.UserService;
 import io.jsonwebtoken.JwtException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
-public class UserController extends GenericController<User, UserDto> {
+public class UserController extends GenericController<User, UserDTO> {
 
     private final UserService userService;
     private final TokenService tokenService;
@@ -43,7 +43,7 @@ public class UserController extends GenericController<User, UserDto> {
     }
 
     @PostMapping("/users/employee")
-    public ResponseEntity<EmployeeDto> getUserEmployee(@RequestBody UserDto userDto) {
+    public ResponseEntity<EmployeeDTO> getUserEmployee(@RequestBody UserDTO userDto) {
         try {
             return new ResponseEntity<>(getEmployee(userService.findByEmail(userDto.getEmail())), HttpStatus.OK);
         } catch (NoSuchElementException ex) {
@@ -52,16 +52,16 @@ public class UserController extends GenericController<User, UserDto> {
     }
 
     @PostMapping("login")
-    public ResponseEntity<Object> signIn(@RequestBody UserDto userDto) throws JsonProcessingException {
+    public ResponseEntity<Object> signIn(@RequestBody UserDTO userDto) throws JsonProcessingException {
         ResponseEntity<Object> responseEntity = null;
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(userDto.getEmail(), userDto.getPassword()));
             responseEntity = new ResponseEntity<>(
-                    new TokenDto(tokenService.generateTokenByDay(10, authentication.getPrincipal(), true)),
+                    new TokenDTO(tokenService.generateTokenByDay(10, authentication.getPrincipal(), true)),
                     HttpStatus.OK);
         } catch (AuthenticationException e) {
-            responseEntity = new ResponseEntity<>(new OperationResultDto<>("messages.user.invalidCredentials"),
+            responseEntity = new ResponseEntity<>(new OperationResultDTO<>("messages.user.invalidCredentials"),
                     HttpStatus.UNAUTHORIZED);
         }
         return responseEntity;
@@ -74,44 +74,44 @@ public class UserController extends GenericController<User, UserDto> {
      * @throws IOException
      */
     @PostMapping("/users")
-    public ResponseEntity<Object> signUp(@RequestBody UserDto userDto, @RequestParam("token") String token)
+    public ResponseEntity<Object> signUp(@RequestBody UserDTO userDto, @RequestParam("token") String token)
             throws IOException {
         ResponseEntity<Object> responseEntity = null;
         try {
-            UserDto tokenInformation = tokenService.getTokenInformation(token, UserDto.class);
+            UserDTO tokenInformation = tokenService.getTokenInformation(token, UserDTO.class);
 
             if (!userService.isUserRegistered(tokenInformation.getEmail())) {
                 userService.save(userDto.getFirstName(), userDto.getLastName(), tokenInformation.getEmail(),
                         userDto.getPassword());
-                responseEntity = new ResponseEntity<>(new TokenDto(tokenService.generateTokenByDay(10,
+                responseEntity = new ResponseEntity<>(new TokenDTO(tokenService.generateTokenByDay(10,
                         userService.findUserDetails(tokenInformation.getEmail()), true)), HttpStatus.OK);
             } else {
                 throw new ValidationException();
             }
         } catch (JwtException e) {
-            responseEntity = new ResponseEntity<>(new OperationResultDto<>("messages.user.unauthorized"),
+            responseEntity = new ResponseEntity<>(new OperationResultDTO<>("messages.user.unauthorized"),
                     HttpStatus.UNAUTHORIZED);
         } catch (ValidationException e) {
-            responseEntity = new ResponseEntity<>(new OperationResultDto<>("messages.user.duplicatedUser"),
+            responseEntity = new ResponseEntity<>(new OperationResultDTO<>("messages.user.duplicatedUser"),
                     HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
     }
 
     @PostMapping("sendSignUpInvitation")
-    public ResponseEntity<Object> inviteNewUser(@Valid @RequestBody UserDto user,
+    public ResponseEntity<Object> inviteNewUser(@Valid @RequestBody UserDTO user,
             @RequestParam("redirect") String redirect)
             throws JsonProcessingException {
         Map<String, Object> parameters = new HashMap<>();
         String[] to = {user.getEmail()};
         String url = redirect + "?token=" + tokenService.generateTokenByDay(1, user, false);
         parameters.put("invitationLink", url);
-        emailService.sendMail(new MailDto(to, "Subscription link", "invitation-template", parameters));
-        return new ResponseEntity<>(new OperationResultDto<>("messages.user.invitedUser"), HttpStatus.OK);
+        emailService.sendMail(new MailDTO(to, "Subscription link", "invitation-template", parameters));
+        return new ResponseEntity<>(new OperationResultDTO<>("messages.user.invitedUser"), HttpStatus.OK);
     }
 
     @PostMapping("/forgottenPassword")
-    public ResponseEntity<Object> sendForgottenPasswordEmail(@Valid @RequestBody UserDto user,
+    public ResponseEntity<Object> sendForgottenPasswordEmail(@Valid @RequestBody UserDTO user,
             @RequestParam("redirect") String redirect)
             throws JsonProcessingException {
         ResponseEntity<Object> responseEntity = null;
@@ -120,60 +120,60 @@ public class UserController extends GenericController<User, UserDto> {
             String[] to = {user.getEmail()};
             String url = redirect + "?token=" + tokenService.generateTokenByDay(1, user, false);
             parameters.put("forgottenPasswordLink", url);
-            emailService.sendMail(new MailDto(to, "Forgotten password", "forgotten-password-template", parameters));
-            responseEntity = new ResponseEntity<>(new OperationResultDto<>("messages.user.forgottenPasswordSent"),
+            emailService.sendMail(new MailDTO(to, "Forgotten password", "forgotten-password-template", parameters));
+            responseEntity = new ResponseEntity<>(new OperationResultDTO<>("messages.user.forgottenPasswordSent"),
                     HttpStatus.OK);
         } else {
-            responseEntity = new ResponseEntity<>(new OperationResultDto<>("messages.user.userNotFound"),
+            responseEntity = new ResponseEntity<>(new OperationResultDTO<>("messages.user.userNotFound"),
                     HttpStatus.NOT_FOUND);
         }
         return responseEntity;
     }
 
     @PostMapping("restorePassword")
-    public ResponseEntity<Object> restorePassword(@RequestBody UserDto userDto, @RequestParam("token") String token)
+    public ResponseEntity<Object> restorePassword(@RequestBody UserDTO userDto, @RequestParam("token") String token)
             throws IOException {
         ResponseEntity<Object> responseEntity = null;
         try {
-            UserDto tokenInformation = tokenService.getTokenInformation(token, UserDto.class);
+            UserDTO tokenInformation = tokenService.getTokenInformation(token, UserDTO.class);
             int operationResult = userService.updatePasswordByEmail(tokenInformation.getEmail(), userDto.getPassword());
             responseEntity = (operationResult == 1)
-                    ? new ResponseEntity<>(new TokenDto(tokenService.generateTokenByDay(10,
+                    ? new ResponseEntity<>(new TokenDTO(tokenService.generateTokenByDay(10,
                     userService.findUserDetails(tokenInformation.getEmail()), true)), HttpStatus.OK)
-                    : new ResponseEntity<>(new OperationResultDto<>("messages.user.notRestoredPassword"),
+                    : new ResponseEntity<>(new OperationResultDTO<>("messages.user.notRestoredPassword"),
                     HttpStatus.BAD_REQUEST);
         } catch (JwtException e) {
-            responseEntity = new ResponseEntity<>(new OperationResultDto<>("messages.token.invalidToken"),
+            responseEntity = new ResponseEntity<>(new OperationResultDTO<>("messages.token.invalidToken"),
                     HttpStatus.UNAUTHORIZED);
         }
         return responseEntity;
     }
 
     @GetMapping("/users")
-    public Page<UserDto> findPaginatedUsers(@RequestParam("page") int page, @RequestParam("size") int size,
-            @RequestParam("filter") String filter,
-            @RequestParam("isAsc") boolean isAsc) {
-        Page<UserDto> paginatedResults = userService
+    public Page<UserDTO> findPaginatedUsers(@RequestParam("page") int page, @RequestParam("size") int size,
+                                            @RequestParam("filter") String filter,
+                                            @RequestParam("isAsc") boolean isAsc) {
+        Page<UserDTO> paginatedResults = userService
                 .findUsers(PageRequest.of(page - 1, size, super.getSortType(isAsc, filter))).map(this::toDto);
         return paginatedResults;
     }
 
     @GetMapping("/users" + "/{id}")
-    public ResponseEntity<UserDto> findUserById(@PathVariable("id") long id) {
+    public ResponseEntity<UserDTO> findUserById(@PathVariable("id") long id) {
         User user = userService.findById(id);
         return new ResponseEntity<>(toDto(user), HttpStatus.OK);
     }
 
     @PutMapping("/users")
-    public ResponseEntity<OperationResultDto<UserDto>> updateUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<OperationResultDTO<UserDTO>> updateUser(@RequestBody UserDTO userDto) {
         User model = toModel(userDto);
         userService.update(model);
-        return new ResponseEntity<>(new OperationResultDto<>("messages.user.updatedUser", toDto(model)), HttpStatus.OK);
+        return new ResponseEntity<>(new OperationResultDTO<>("messages.user.updatedUser", toDto(model)), HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/users" + "/generic")
-    public List<UserDto> findAll(@RequestParam(FILTER) String filter) {
+    public List<UserDTO> findAll(@RequestParam(FILTER) String filter) {
         return super.findAll(filter);
     }
 
@@ -182,9 +182,9 @@ public class UserController extends GenericController<User, UserDto> {
         return userService;
     }
 
-    private EmployeeDto getEmployee(User user) {
+    private EmployeeDTO getEmployee(User user) {
         if (user != null && user.getEmployee() != null) {
-            return new EmployeeDto().toDto(user.getEmployee(), modelMapper);
+            return new EmployeeDTO().toDto(user.getEmployee(), modelMapper);
         }
         throw new NoSuchElementException("User does not have an employee asociated or does not exist");
     }

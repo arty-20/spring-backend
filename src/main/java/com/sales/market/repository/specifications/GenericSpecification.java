@@ -1,7 +1,7 @@
 package com.sales.market.repository.specifications;
 
 import com.sales.market.exception.RepositoryException;
-import com.sales.market.model.ModelBase;
+import com.sales.market.data.model.ModelBase;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

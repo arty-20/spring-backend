@@ -1,6 +1,7 @@
 package com.sales.market.service;
 
-import com.sales.market.dto.MailDto;
+import com.sales.market.data.dto.MailDTO;
+import com.sales.market.service.interfaz.UserService;
 import io.jsonwebtoken.lang.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class EmailService {
     @Autowired
     private UserService userService;
 
-    public void sendMail(MailDto mail) {
+    public void sendMail(MailDTO mail) {
         new Thread(() -> {
             try {
                 String[] recipients = filterRecipients(mail.getTo());
@@ -65,7 +66,7 @@ public class EmailService {
         return list.toArray(new String[0]);
     }
 
-    private void addAttachment(MailDto mail, MimeMessageHelper helper) throws MessagingException {
+    private void addAttachment(MailDTO mail, MimeMessageHelper helper) throws MessagingException {
         if (mail.getMailAttachment() != null) {
             if (mail.getMailAttachment().getAttachment() instanceof DataSource) {
                 helper.addAttachment(mail.getMailAttachment().getAttachmentName(),

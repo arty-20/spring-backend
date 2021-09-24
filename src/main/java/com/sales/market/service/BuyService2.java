@@ -4,7 +4,7 @@
 
 package com.sales.market.service;
 
-import com.sales.market.model.Buy;
+import com.sales.market.data.model.Buy;
 import com.sales.market.repository.BuyRepository;
 import org.springframework.stereotype.Service;
 

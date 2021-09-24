@@ -1,6 +1,6 @@
 package com.sales.market;
 
-import com.sales.market.model.Category;
+import com.sales.market.data.model.Category;
 import com.sales.market.repository.CategoryRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

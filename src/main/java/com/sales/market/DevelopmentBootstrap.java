@@ -1,14 +1,11 @@
-/**
- * @author: Edson A. Terceros T.
- */
-
 package com.sales.market;
 
-import com.sales.market.model.*;
+import com.sales.market.data.model.*;
 import com.sales.market.repository.BuyRepository;
 import com.sales.market.repository.EmployeeRepository;
-import com.sales.market.service.*;
+import com.sales.market.service.interfaz.*;
 import io.micrometer.core.instrument.util.IOUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -17,9 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Component
 public class DevelopmentBootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private final BuyRepository buyRepository;
@@ -27,28 +26,15 @@ public class DevelopmentBootstrap implements ApplicationListener<ContextRefreshe
     private final SubCategoryService subCategoryService;
     private final ItemService itemService;
     private final ItemInstanceService itemInstanceService;
-    private EmployeeRepository employeeRepository;
-    private UserService userService;
-    private RoleService roleService;
+    private final EmployeeRepository employeeRepository;
+    private final UserService userService;
+    private final RoleService roleService;
 
     SubCategory beverageSubCat = null;
 
     // injeccion evita hacer instancia   = new Clase();
     // bean pueden tener muchos campos y otros beans asociados
 
-
-    public DevelopmentBootstrap(BuyRepository buyRepository, CategoryService categoryService,
-            SubCategoryService subCategoryService, ItemService itemService, ItemInstanceService itemInstanceService,
-            EmployeeRepository employeeRepository, UserService userService, RoleService roleService) {
-        this.buyRepository = buyRepository;
-        this.categoryService = categoryService;
-        this.subCategoryService = subCategoryService;
-        this.itemService = itemService;
-        this.itemInstanceService = itemInstanceService;
-        this.employeeRepository = employeeRepository;
-        this.userService = userService;
-        this.roleService = roleService;
-    }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
@@ -120,22 +106,24 @@ public class DevelopmentBootstrap implements ApplicationListener<ContextRefreshe
 
 
     private void persistItemInstances(Item maltinItem) {
-        ItemInstance maltinItem1 = createItem(maltinItem, "SKU-77721106006158", 5D);
-        ItemInstance maltinItem2 = createItem(maltinItem, "SKU-77721106006159", 5D);
-        ItemInstance maltinItem3 = createItem(maltinItem, "SKU-77721106006160", 5D);
-        ItemInstance maltinItem4 = createItem(maltinItem, "SKU-77721106006161", 5D);
+        LocalDate expiry = LocalDate.now().plusWeeks(1);
+        ItemInstance maltinItem1 = createItem(maltinItem, "SKU-77721106006158", new BigDecimal("5"), expiry);
+        ItemInstance maltinItem2 = createItem(maltinItem, "SKU-77721106006159", new BigDecimal("5"), expiry);
+        ItemInstance maltinItem3 = createItem(maltinItem, "SKU-77721106006160", new BigDecimal("5"), expiry);
+        ItemInstance maltinItem4 = createItem(maltinItem, "SKU-77721106006161", new BigDecimal("5"), expiry);
         itemInstanceService.save(maltinItem1);
         itemInstanceService.save(maltinItem2);
         itemInstanceService.save(maltinItem3);
         itemInstanceService.save(maltinItem4);
     }
 
-    private ItemInstance createItem(Item maltinItem, String sku, double price) {
+    private ItemInstance createItem(Item maltinItem, String sku, BigDecimal price, LocalDate dateExpiry) {
         ItemInstance itemInstance = new ItemInstance();
         itemInstance.setItem(maltinItem);
         itemInstance.setFeatured(true);
         itemInstance.setPrice(price);
         itemInstance.setIdentifier(sku);
+        itemInstance.setDateExpiry(dateExpiry);
         return itemInstance;
     }
 

@@ -5,7 +5,7 @@
 package com.sales.market.repository;
 
 
-import com.sales.market.model.Position;
+import com.sales.market.data.model.Position;
 
 public interface PositionRepository extends GenericRepository<Position> {
 }

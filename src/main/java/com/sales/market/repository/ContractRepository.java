@@ -4,7 +4,7 @@
 
 package com.sales.market.repository;
 
-import com.sales.market.model.Contract;
+import com.sales.market.data.model.Contract;
 
 public interface ContractRepository extends GenericRepository<Contract> {
 }

@@ -1,6 +1,6 @@
 package com.sales.market.repository.specifications;
 
-import com.sales.market.model.ModelBase;
+import com.sales.market.data.model.ModelBase;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;

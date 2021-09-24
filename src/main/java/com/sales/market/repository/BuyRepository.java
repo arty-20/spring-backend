@@ -4,7 +4,7 @@
 
 package com.sales.market.repository;
 
-import com.sales.market.model.Buy;
+import com.sales.market.data.model.Buy;
 
 import java.math.BigDecimal;
 

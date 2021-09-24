@@ -1,6 +1,7 @@
 package com.sales.market.service;
 
-import com.sales.market.model.Category;
+import com.sales.market.data.model.Category;
+import com.sales.market.service.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
